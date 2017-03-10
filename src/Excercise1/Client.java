@@ -31,9 +31,9 @@ public class Client {
 		boolean running = true;
 		while (running) {
 			try {
-				System.out.println("please enter a word: ");
+				System.out.println("Please enter a word: ");
 				line = stdIn.readLine();
-				if (!line.equals("QUIT")){
+				if (!line.toUpperCase().equals("QUIT")){
 					System.out.println(line);
 					socketOut.println(line);
 					response = socketIn.readLine();

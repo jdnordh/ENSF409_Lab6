@@ -26,7 +26,29 @@ public class Server {
 	}
 	
 	public void communicate(){
-		
+		while (true){
+			String input, output = "Error reading from socket";
+			try {
+				input = in.readLine();
+				if (input == null) break;
+				if (input.toUpperCase().equals("QUIT")) break;
+				if (input.equals(reverse(input))) output = input + " is a palindrome";
+				else output = input + " is not a palindrome";
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			out.println(output);
+		}
+		try{
+			out.close();
+			socket.close();
+			serverSocket.close();
+			in.close();
+		} catch (IOException e) {
+			System.exit(1);
+			e.printStackTrace();
+		}
+		System.exit(0);
 	}
 	
 	public static String reverse(String s){
