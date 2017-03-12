@@ -1,5 +1,6 @@
 package exercise4;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Defines the input as certain player
@@ -8,6 +9,8 @@ import java.io.IOException;
  */
 public abstract class Player{
 	abstract public void makeMove() throws IOException;
+	
+	protected PrintWriter out;
 	
 	/** Name of the player */
 	protected String name;
@@ -19,6 +22,10 @@ public abstract class Player{
 	protected char mark;
 	/** True if player is human, for display purposes */
 	boolean human = false;
+
+	public void setPrinter(PrintWriter p){
+		out = p;
+	}
 	
 	/** sets player to human*/
 	protected void setHuman(){
@@ -51,6 +58,10 @@ public abstract class Player{
 	public Player(String name2, char letterX) {
 		name = new String(name2);
 		mark = letterX;
+	}
+	
+	public String getName(){
+		return name;
 	}
 	
 	/**
@@ -86,25 +97,6 @@ public abstract class Player{
 	 */
 	public static boolean isNumeric(String s) {  
 	    return s.matches("[-+]?\\d*\\.?\\d+");  
-	}
-	
-	/**
-	 * Called if the player wins
-	 */
-	public void wins(){
-		board.display();
-		System.out.print("\n=========================================\n"
-				+ name+" wins!\n"
-				+ "=========================================");
-	}
-	/**
-	 * Called if the game is a tie
-	 */
-	public void tie(){
-		board.display();
-		System.out.print("\n=========================================\n"
-				+ "Tie game!\n"
-				+ "=========================================");
 	}
 	
 	/** 

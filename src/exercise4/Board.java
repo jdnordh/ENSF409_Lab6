@@ -1,5 +1,6 @@
 package exercise4;
 
+import java.io.PrintWriter;
 
 //STUDENTS SHOULD ADD CLASS COMMENT, METHOD COMMENTS, FIELD COMMENTS 
 
@@ -10,6 +11,9 @@ package exercise4;
  *
  */
 public class Board implements Constants {
+	private PrintWriter out1;
+	private PrintWriter out2;
+	
 	/**
 	 * Array of chars for putting marks into to play the game
 	 */
@@ -30,7 +34,7 @@ public class Board implements Constants {
 	/**
 	 * Constructs blank board
 	 */
-	public Board() {
+	public Board(PrintWriter o1, PrintWriter o2) {
 		markCount = 0;
 		theBoard = new char[3][];
 		for (int i = 0; i < 3; i++) {
@@ -38,6 +42,20 @@ public class Board implements Constants {
 			for (int j = 0; j < 3; j++)
 				theBoard[i][j] = SPACE_CHAR;
 		}
+		out1 = o1;
+		out2 = o2;
+	}
+	
+	public Board(PrintWriter o1) {
+		markCount = 0;
+		theBoard = new char[3][];
+		for (int i = 0; i < 3; i++) {
+			theBoard[i] = new char[3];
+			for (int j = 0; j < 3; j++)
+				theBoard[i][j] = SPACE_CHAR;
+		}
+		out1 = o1;
+		out2 = null;
 	}
 	
 	/**
@@ -87,16 +105,25 @@ public class Board implements Constants {
 			return false;
 	}
 
+	public void display(){
+		if (out2 == null) displayOne();
+		else displayTwo();
+	}
+	
 	/** Displays the board as an output to the console */
-	public void display() {
+	public void displayTwo() {
 		displayColumnHeaders();
 		addHyphens();
 		for (int row = 0; row < 3; row++) {
 			addSpaces();
-			System.out.print("    row " + row + ' ');
-			for (int col = 0; col < 3; col++)
-				System.out.print("|  " + getMark(row, col) + "  ");
-			System.out.println("|");
+			out1.print("    row " + row + ' ');
+			out2.print("    row " + row + ' ');
+			for (int col = 0; col < 3; col++){
+				out1.print("|  " + getMark(row, col) + "  ");
+				out2.print("|  " + getMark(row, col) + "  ");
+			}
+			out1.println("|");
+			out2.println("|");
 			addSpaces();
 			addHyphens();
 		}
@@ -171,28 +198,80 @@ public class Board implements Constants {
 		}
 		return result;
 	}
+	/** Use for displaying when only one human player, ie one thread running */
+	public void displayOne(){
+		displayColumnHeadersOne();
+		addHyphensOne();
+		for (int row = 0; row < 3; row++) {
+			addSpacesOne();
+			out1.print("    row " + row + ' ');
+			for (int col = 0; col < 3; col++){
+				out1.print("|  " + getMark(row, col) + "  ");
+			}
+			out1.println("|");
+			addSpacesOne();
+			addHyphensOne();
+		}
+	}
+	
+	/** * Displays column headers */
+	void displayColumnHeadersOne() {
+		out1.print("          ");
+		for (int j = 0; j < 3; j++){
+			out1.print("|col " + j);
+		}
+		out1.println();
+	}
+	
+	/** * Add hyphens to output console */
+	void addHyphensOne() {
+		out1.print("          ");
+		for (int j = 0; j < 3; j++)
+			out1.print("+-----");
+		out1.println("+");
+	}
+	
+	/** * Add spaces to output console */
+	void addSpacesOne() {
+		out1.print("          ");
+		for (int j = 0; j < 3; j++)
+			out1.print("|     ");
+		out1.println("|");
+	}
 	
 	/** * Displays column headers */
 	void displayColumnHeaders() {
-		System.out.print("          ");
-		for (int j = 0; j < 3; j++)
-			System.out.print("|col " + j);
-		System.out.println();
+		out1.print("          ");
+		out2.print("          ");
+		for (int j = 0; j < 3; j++){
+			out1.print("|col " + j);
+			out2.print("|col " + j);
+		}
+		out1.println();
+		out2.println();
 	}
 	
 	/** * Add hyphens to output console */
 	void addHyphens() {
-		System.out.print("          ");
-		for (int j = 0; j < 3; j++)
-			System.out.print("+-----");
-		System.out.println("+");
+		out1.print("          ");
+		out2.print("          ");
+		for (int j = 0; j < 3; j++){
+			out1.print("+-----");
+			out2.print("+-----");
+		}
+		out1.println("+");
+		out2.println("+");
 	}
 	
 	/** * Add spaces to output console */
 	void addSpaces() {
-		System.out.print("          ");
-		for (int j = 0; j < 3; j++)
-			System.out.print("|     ");
-		System.out.println("|");
+		out1.print("          ");
+		out2.print("          ");
+		for (int j = 0; j < 3; j++){
+			out1.print("|     ");
+			out2.print("|     ");
+		}
+		out1.println("|");
+		out2.println("|");
 	}
 }

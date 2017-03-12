@@ -12,6 +12,9 @@ public class GameClient {
 	private BufferedReader stdIn;
 	private BufferedReader socketIn;
 
+	private ClientThread p1;
+	private ClientThread p2;
+	
 	public GameClient(String serverName, int portNumber) {
 		try {
 			palinSocket = new Socket(serverName, portNumber);
@@ -23,7 +26,30 @@ public class GameClient {
 			System.err.println(e.getStackTrace());
 		}
 	}
-
+	
+	private void startOp(){
+		
+	}
+	
+	public void getPlayers(){
+		p1 = new ClientThread();
+		p1.start();
+		
+		System.out.println("Would you like a human opponent? (Y/N)");
+		try{
+			String input = stdIn.readLine();
+			while(true){
+				if (input.toUpperCase().equals("Y")) {
+					startOp();
+					break;
+				}
+				else if (input.toUpperCase().equals("N")) break;
+			}
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+	}
+	
 	public void communicate()  {
 
 		String line = "";
@@ -57,8 +83,8 @@ public class GameClient {
 	}
 
 	public static void main(String[] args) throws IOException  {
-		GameClient aClient = new GameClient("localhost", 9090);
-		aClient.communicate();
+		GameClient a = new GameClient("localhost", 9090);
+		a.getPlayers();
 	}
 }
 

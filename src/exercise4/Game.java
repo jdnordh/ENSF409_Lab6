@@ -4,16 +4,27 @@ package exercise4;
 import java.io.*;
 
 public class Game implements Constants {
-
-	private Board theBoard;
-	private Referee theRef;
 	
-	/**
-	 * creates a board for the game
-	 */
-    public Game( ) {
-        theBoard  = new Board();
-
+	private BufferedReader in1;
+	private PrintWriter out1;
+	private BufferedReader in2;
+	private PrintWriter out2;
+	
+	protected Board theBoard;
+	private Referee theRef;
+    
+    public Game(BufferedReader i, PrintWriter o) {
+        theBoard  = new Board(o);
+        in1 = i;
+        out1 = o;
+	}
+    
+    public Game(BufferedReader i1, PrintWriter o1, BufferedReader i2 ,PrintWriter o2) {
+        theBoard  = new Board(o1, o2);
+        in1 = i1;
+        out1 = o1;
+        in2 = i2;
+        out2 = o2;
 	}
     /** Allows for more than one play through*/
 	private static Boolean play = true;
@@ -29,40 +40,38 @@ public class Game implements Constants {
     }
     
 	
-	public static void main(String[] args) throws IOException {
+	public void start() throws IOException {
 		do {
-		Referee theRef;
-		Player xPlayer, oPlayer;
-		BufferedReader stdin;
-		Game theGame = new Game();
-		stdin = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("\nPlease enter the name of the \'X\' player: ");
-		String name= stdin.readLine();
-		while (name == null) {
-			System.out.print("Please try again: ");
-			name = stdin.readLine();
-		}
+			Referee theRef;
+			Player xPlayer, oPlayer;
+			out1.print("\nPlease enter the name of the \'X\' player: ");
+			String name= in1.readLine();
+			while (name == null) {
+				out1.print("Please try again: ");
+				name = in1.readLine();
+			}
 
-		xPlayer = create_player (name, LETTER_X, theGame.theBoard, stdin);
+			xPlayer = create_player (name, LETTER_X, theBoard, in1, out1);
 		
-		System.out.print("\nPlease enter the name of the \'O\' player: ");
-		name = stdin.readLine();
-		while (name == null) {
-			System.out.print("Please try again: ");
-			name = stdin.readLine();
-		}
+			out1.print("\nPlease enter the name of the \'O\' player: ");
+			name = in1.readLine();
+			while (name == null) {
+				System.out.print("Please try again: ");
+				name = in1.readLine();
+			}
+			
+			oPlayer = create_player (name, LETTER_O, theBoard, in2, out2);
 		
-		oPlayer = create_player (name, LETTER_O, theGame.theBoard, stdin);
-		
-		theRef = new Referee();
-		theRef.setBoard(theGame.theBoard);
-		theRef.setoPlayer(oPlayer);
-		theRef.setxPlayer(xPlayer);
+			theRef = new Referee(out1, out2);
+			theRef.setBoard(theBoard);
+			theRef.setoPlayer(oPlayer);
+			theRef.setxPlayer(xPlayer);
         
-        theGame.appointReferee(theRef);
-        play = playAgain();
+			appointReferee(theRef);
+			play = playAgain();
 		} while (play);
-		System.out.print("Exiting...\n");
+		out1.print("Exiting...\n");
+		if (out2 != null) out2.print("Exiting...\n");
 	}
 	
 	/**
@@ -70,12 +79,12 @@ public class Game implements Constants {
 	 * @return True if they want to play again
 	 * @throws IOException
 	 */
-	private static Boolean playAgain() throws IOException{
+	private Boolean playAgain() throws IOException{
 		BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("\nWould you like to play again? (Y/N)\n");
+		out1.print("\nWould you like to play again? (Y/N)\n");
 		String in= stdin.readLine();
 		while (in == null || in.length()<1){
-			System.out.print("Please try again: ");
+			out1.print("Please try again: ");
 			in = stdin.readLine();
 		}
 		if (in.toUpperCase().charAt(0)=='Y'){
@@ -94,14 +103,14 @@ public class Game implements Constants {
 	 * @return a newly created player
 	 * @throws IOException
 	 */
-	static public Player  create_player(String name, char mark, Board board,
-			BufferedReader stdin)throws IOException {
+	public Player create_player(String name, char mark, Board board,
+			BufferedReader stdin, PrintWriter out)throws IOException {
 		// Get the player type.
 		final int NUMBER_OF_TYPES = 4;
-		System.out.print ( "\nWhat type of player is " + name + "?\n");
-		System.out.print("  1: Human\n" + "  2: Random Player\n"
+		out.print ( "\nWhat type of player is " + name + "?\n");
+		out.print("  1: Human\n" + "  2: Random Player\n"
 		+ "  3: Blocking Player\n" + "  4: Smart Player\n");
-		System.out.print( "Please enter a number in the range 1-" + NUMBER_OF_TYPES + ": ");
+		out.print( "Please enter a number in the range 1-" + NUMBER_OF_TYPES + ": ");
 		int player_type = 0;
 
 		String input;
@@ -110,8 +119,8 @@ public class Game implements Constants {
 		if (isNumeric(input)) player_type = Integer.parseInt(input);
 		else player_type = -1;
 		while (player_type < 1 || player_type > NUMBER_OF_TYPES) {
-			System.out.print( "Please try again.\n");
-			System.out.print ( "Enter a number in the range 1-" +NUMBER_OF_TYPES + ": ");
+			out.print( "Please try again.\n");
+			out.print ( "Enter a number in the range 1-" +NUMBER_OF_TYPES + ": ");
 			input= stdin.readLine();
 			if (isNumeric(input)) player_type = Integer.parseInt(input);
 		}
@@ -132,11 +141,12 @@ public class Game implements Constants {
 				result = new SmartPlayer(name, mark);
 				break;
 			default:
-				System.out.print ( "\nDefault case in switch should not be reached.\n"
+				out.print ( "\nDefault case in switch should not be reached.\n"
 				+ "  Program terminated.\n");
 				System.exit(0);
 		}
 		result.setBoard(board);
+		result.setPrinter(out);
 		return result;
 	}
 	/** Check if string is numeric*/

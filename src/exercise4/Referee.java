@@ -1,5 +1,6 @@
 package exercise4;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Runs the game, assigns players and a board
@@ -7,6 +8,9 @@ import java.io.IOException;
  *
  */
 public class Referee {
+	private PrintWriter out1;
+	private PrintWriter out2;
+	
 	/**
 	 * Specifies player that uses x's as marks
 	 */
@@ -21,10 +25,15 @@ public class Referee {
 	private Board board;
 	/** true if both player are bots*/
 	private Boolean bothBot = false;
-	/**
-	 * Default constructor 
-	 */
-	public Referee(){
+
+	public Referee(PrintWriter o1){
+		out1 = o1;
+		out2 = null;
+	}
+	
+	public Referee(PrintWriter o1, PrintWriter o2){
+		out1 = o1;
+		out2 = o2;
 	}
 	
 	/**
@@ -36,7 +45,13 @@ public class Referee {
 		oPlayer.setOpponent(xPlayer);
 		if (xPlayer.isHuman() || oPlayer.isHuman()) bothBot = false;
 		else bothBot = true;
-		System.out.print("Started the game...\n");
+		if (out2 == null){
+			out1.print("Started the game...\n");
+		}
+		else {
+			out1.print("Started the game...\n");
+			out2.print("Started the game...\n");
+		}
 		board.display();
 		if (!bothBot){
 			while (!board.oWins() && !board.xWins() && !board.isFull()){
@@ -47,12 +62,19 @@ public class Referee {
 					board.display();
 				}
 			}
-			if (board.xWins()) xPlayer.wins();
-			else if (board.oWins()) oPlayer.wins();
-			else oPlayer.tie();
+			if (out2 == null){
+				if (board.xWins()) winsOne(xPlayer);
+				else if (board.oWins()) winsOne(oPlayer);
+				else tieOne();
+			}
+			else {
+				if (board.xWins()) wins(xPlayer);
+				else if (board.oWins()) wins(oPlayer);
+				else tie();
+			}
 		}
 		else if (bothBot){
-			System.out.print("Both players are bots, so delaying move time...\n");
+			out1.print("Both players are bots, so delaying move time...\n");
 			double time1, time2;
 			while (!board.oWins() && !board.xWins() && !board.isFull()){
 				xPlayer.makeMove();
@@ -74,12 +96,45 @@ public class Referee {
 					board.display();
 				}
 			}
-			if (board.xWins()) xPlayer.wins();
-			else if (board.oWins()) oPlayer.wins();
-			else oPlayer.tie();
+			if (board.xWins()) winsOne(xPlayer);
+			else if (board.oWins()) winsOne(oPlayer);
+			else tieOne();
 		}
 	}
 	
+	public void wins(Player p){
+		board.display();
+		out1.print("\n=========================================\n"
+				+ p.getName() +" wins!\n"
+				+ "=========================================");
+		out2.print("\n=========================================\n"
+				+ p.getName() +" wins!\n"
+				+ "=========================================");
+	}
+
+	public void tie(){
+		board.display();
+		out1.print("\n=========================================\n"
+				+ "Tie game!\n"
+				+ "=========================================");
+		out2.print("\n=========================================\n"
+				+ "Tie game!\n"
+				+ "=========================================");
+	}
+	
+	public void winsOne(Player p){
+		board.displayOne();
+		out1.print("\n=========================================\n"
+				+ p.getName() +" wins!\n"
+				+ "=========================================");
+	}
+
+	public void tieOne(){
+		board.displayOne();
+		out1.print("\n=========================================\n"
+				+ "Tie game!\n"
+				+ "=========================================");
+	}
 	/**
 	 * Assigns board to be played on
 	 * @param b Board used to play game

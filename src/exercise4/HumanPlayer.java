@@ -21,28 +21,28 @@ public class HumanPlayer extends Player{
 	public void makeMove() throws IOException{
 		counter--;
 		if (counter<0) {
-			System.out.print("Stop inputing bad things\nExiting...\n");
+			out.print("Stop inputing bad things\nExiting...\n");
 			System.exit(1);
 		}
 		int row=0, col=0;
 		BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print(name + ", what row should your next " + mark + " be placed in? ");
+		out.print(name + ", what row should your next " + mark + " be placed in? ");
 		String in= stdin.readLine();
 		do {
 			if (in!=null && in.length()>0) row = in.charAt(0)-48;
 			while (in == null || row<0 || row>2 || in.length()<1) {
-				System.out.print("Please try again: ");
+				out.print("Please try again: ");
 				in = stdin.readLine();
 				if (isNumeric(in)){
 					row = in.charAt(0)-48;
 				}
 				else in=null;
 			}
-			System.out.print(name + ", what column should your next " + mark + " be placed in? ");
+			out.print(name + ", what column should your next " + mark + " be placed in? ");
 			in= stdin.readLine();
 			if (in!=null && in.length()>0) col = in.charAt(0)-48;
 			while (in == null || col<0 || col>2 || in.length()<1) {
-				System.out.print("Please try again: ");
+				out.print("Please try again: ");
 				in = stdin.readLine();
 				if (isNumeric(in)){
 					col = in.charAt(0)-48;
@@ -50,7 +50,7 @@ public class HumanPlayer extends Player{
 				else in=null;
 			}
 		} while (board.getMark(row,col) != ' ');
-		System.out.print("Space is already in use: \n");
+		out.print("Space is already in use: \n");
 		board.addMark(row, col, mark);
 	}
 }
