@@ -11,9 +11,6 @@ public class GameClient {
 	private Socket palinSocket;
 	private BufferedReader stdIn;
 	private BufferedReader socketIn;
-
-	private ClientThread p1;
-	private ClientThread p2;
 	
 	public GameClient(String serverName, int portNumber) {
 		try {
@@ -27,49 +24,23 @@ public class GameClient {
 		}
 	}
 	
-	private void startOp(){
-		
-	}
-	
-	public void getPlayers(){
-		p1 = new ClientThread();
-		p1.start();
-		
-		System.out.println("Would you like a human opponent? (Y/N)");
-		try{
-			String input = stdIn.readLine();
-			while(true){
-				if (input.toUpperCase().equals("Y")) {
-					startOp();
-					break;
-				}
-				else if (input.toUpperCase().equals("N")) break;
-			}
-		} catch (IOException e){
-			e.printStackTrace();
-		}
-	}
-	
 	public void communicate()  {
-
-		String line = "";
+		System.out.println("Starting...");
+		String input = "";
 		String response = "";
-		boolean running = true;
-		while (running) {
+		while (true) {
 			try {
-				System.out.println("Please enter a word: ");
-				line = stdIn.readLine();
-				if (!line.toUpperCase().equals("QUIT")){
-					System.out.println(line);
-					socketOut.println(line);
-					response = socketIn.readLine();
-					System.out.println(response);	
+				response = socketIn.readLine();
+				System.out.println(response);
+				input = stdIn.readLine();
+				if (!input.toUpperCase().equals("QUIT")){
+					socketOut.println(input);	
 				}else{
-					running = false;
+					break;
 				}
 				
 			} catch (IOException e) {
-				System.out.println("Sending error: " + e.getMessage());
+				System.out.println("Error: " + e.getMessage());
 			}
 		}
 		try {
@@ -77,14 +48,14 @@ public class GameClient {
 			socketIn.close();
 			socketOut.close();
 		} catch (IOException e) {
-			System.out.println("closing error: " + e.getMessage());
+			System.out.println("Closing error: " + e.getMessage());
 		}
-
+		System.out.println("Closing...");
 	}
 
 	public static void main(String[] args) throws IOException  {
 		GameClient a = new GameClient("localhost", 9090);
-		a.getPlayers();
+		a.communicate();
 	}
 }
 

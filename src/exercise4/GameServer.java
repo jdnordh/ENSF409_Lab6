@@ -16,6 +16,10 @@ public class GameServer implements Constants {
 	
 	private Game game;
 	
+	private int threads;
+	private GameThread p1;
+	private GameThread p2;
+	
 	public GameServer(String s, int port){
 		try{
 			serverSocket = new ServerSocket(port);
