@@ -34,9 +34,11 @@ public class GameServer implements Constants {
 
 	public void play(){
 		while (true){
+			game = new Game();
 			
 			break;
 		}
+		System.out.println("Exiting...");
 		try{
 			out.close();
 			socket.close();

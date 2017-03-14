@@ -13,6 +13,10 @@ public class Game implements Constants {
 	protected Board theBoard;
 	private Referee theRef;
     
+	public Game(){
+		
+	}
+	
     public Game(BufferedReader i, PrintWriter o) {
         theBoard  = new Board(o);
         in1 = i;
