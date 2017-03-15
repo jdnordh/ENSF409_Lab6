@@ -1,4 +1,5 @@
 package exercise4;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -8,7 +9,7 @@ import java.io.PrintWriter;
  *
  */
 public abstract class Player{
-	abstract public void makeMove() throws IOException;
+	abstract public void makeMove(BufferedReader in, PrintWriter out) throws IOException;
 	
 	protected PrintWriter out;
 	
@@ -20,22 +21,9 @@ public abstract class Player{
 	protected Player opponent;
 	/** Which mark the player is using */
 	protected char mark;
-	/** True if player is human, for display purposes */
-	boolean human = false;
 
 	public void setPrinter(PrintWriter p){
 		out = p;
-	}
-	
-	/** sets player to human*/
-	protected void setHuman(){
-		human = true;
-	}
-	/**Check if Player is human
-	 * @return True if Player is human
-	 */
-	public Boolean isHuman(){
-		return human;
 	}
 	
 	/** Sets name of the player
@@ -68,9 +56,9 @@ public abstract class Player{
 	 * If the game is still playable, make a move, unused
 	 * @throws IOException
 	 */
-	public void play() throws IOException{
+	public void play(BufferedReader in, PrintWriter out) throws IOException{
 		if (!board.isFull() && !board.oWins() && !board.xWins()){
-			makeMove();
+			makeMove(in, out);
 		}
 	}
 	

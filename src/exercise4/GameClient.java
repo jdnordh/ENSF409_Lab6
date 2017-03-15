@@ -24,6 +24,9 @@ public class GameClient {
 		}
 	}
 	
+	/**
+	 * Client will quit from either server telling it to, or the client telling it to
+	 */
 	public void communicate()  {
 		System.out.println("Starting...");
 		String input = "";
@@ -31,18 +34,22 @@ public class GameClient {
 		while (true) {
 			try {
 				response = socketIn.readLine();
+				if (response.equals("QUIT")) break;
 				System.out.println(response);
 				input = stdIn.readLine();
-				if (!input.toUpperCase().equals("QUIT")){
+				if (!input.equalsIgnoreCase("QUIT")){
 					socketOut.println(input);	
+					socketOut.flush();
 				}else{
 					break;
 				}
 				
 			} catch (IOException e) {
 				System.out.println("Error: " + e.getMessage());
+				break;
 			}
 		}
+		socketOut.println("QUIT");
 		try {
 			stdIn.close();
 			socketIn.close();
@@ -58,4 +65,3 @@ public class GameClient {
 		a.communicate();
 	}
 }
-

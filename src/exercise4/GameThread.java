@@ -1,35 +1,51 @@
 package exercise4;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.Socket;
 
 public class GameThread extends Thread{
-	/** The game that the thread is connected to */
 	private Game game;
-	/** The player that is inputing to the thread */
-	private Player player;
-	/** input from the client */
-	private BufferedReader in;
-	/** Output to the client */
-	private PrintWriter out;
+	private Socket socket;
 	
-	/**
-	 * Constructor for the Thread
-	 * @param g The game to be played
-	 * @param p The player using this thread
-	 * @param i The input from the client
-	 * @param o The output to the client
-	 */
-	public GameThread(Game g, Player p, BufferedReader i, PrintWriter o){
+	private PrintWriter out;
+	private BufferedReader in;
+	
+	private boolean running;
+	
+	public GameThread(String name, Socket s){
+		super(name);
+		socket = s;
+		try {
+			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+		} catch (IOException e) {
+			System.out.println("Error... " + e.getMessage());
+		}
+	}
+	
+	public void setGame(Game g){
 		game = g;
-		player = p;
-		in = i;
-		out = o;
+	}
+	
+	public boolean isRunning(){
+		return running;
 	}
 	
 	public void run(){
+		running = true;
+		System.out.println("Thread " + this.getName() + " started");
+		String temp = "Starting the game...";
+		out.println(temp);
+		out.flush();
+		game.getBoard().display(out);
 		try {
-			while (true){
+			while (running){
+				game.setPlayer(in, out, this.getName());
+				game.play(in, out, this.getName());
 				sleep(1);
 			}
 		} catch (InterruptedException e) {
@@ -37,5 +53,4 @@ public class GameThread extends Thread{
 		}
 		
 	}
-	
 }

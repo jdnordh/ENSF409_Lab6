@@ -5,10 +5,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class GameServer implements Constants {
+public class GameServer {
 	private PrintWriter out;
 	private Socket socket;
 	private ServerSocket serverSocket;
@@ -16,28 +17,40 @@ public class GameServer implements Constants {
 	
 	private Game game;
 	
-	private int threads;
 	private GameThread p1;
 	private GameThread p2;
 	
 	public GameServer(String s, int port){
 		try{
-			serverSocket = new ServerSocket(port);
-			System.out.println("Server is now Running....");
+			InetAddress a = InetAddress.getByName("localhost");
+			serverSocket = new ServerSocket(port, 50, a);
+			System.out.println("Server is now running....");
 			socket = serverSocket.accept();
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter((socket.getOutputStream()), true);
 		} catch (IOException e){
-			System.out.println("Server error");
+			System.out.println("Server error: " + e.getMessage());
 		}
 	}
 
-	public void play(){
-		while (true){
-			game = new Game();
+	public void play(){	
+		game = new Game();
+		try {
+			System.out.println("Connecting P1");
+			p1 = new GameThread("Player 1", socket);
+			p1.setGame(game);
+			p1.start();
+			socket = serverSocket.accept();
+			System.out.println("Connecting P2");
+			p2 = new GameThread("Player 2", socket);
+			p2.setGame(game);
+			p2.start();
 			
-			break;
+		} catch (IOException e){
+			System.out.println("Error... " + e.getMessage());
 		}
+		while (p1.isRunning() || p2.isRunning());
+		
 		System.out.println("Exiting...");
 		try{
 			out.close();
@@ -53,8 +66,8 @@ public class GameServer implements Constants {
 
 	
 	public static void main(String [] args){
-		GameServer ser = new GameServer("localhost", 8099);
+		GameServer ser;
+		ser = new GameServer("localhost", 9090);
 		ser.play();
 	}
 }
-
