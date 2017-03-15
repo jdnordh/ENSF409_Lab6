@@ -41,7 +41,7 @@ public class ReadRecord {
                 		+ record.getSingerName() + " " + record.getPurchasePrice());
             }
         } catch(EOFException e){
-            System.err.println( "Error: EOF reached." );
+            System.out.println( "EOF reached.");
         } catch (ClassNotFoundException e) {
             System.err.println( "Error: Class not found." );
 		} catch (IOException e) {
