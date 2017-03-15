@@ -104,14 +104,14 @@ public class Game implements Constants {
 	}
 	
 	synchronized public void play(BufferedReader in, PrintWriter out, String s){
-		//this.setFull();
+		this.setFull();
 		if (p1 && p2 && play){
 			if (!isFin()){
 				if (p1turn && s.equals("Player 1")) {
 					try {
 						board.display(out);
 						xPlayer.makeMove(in, out);
-						board.display(out);
+						if (!isFin()) board.display(out);
 						out.println("Waiting for opponent...");
 						out.flush();
 						p1turn = false;
@@ -123,7 +123,7 @@ public class Game implements Constants {
 					try {
 						board.display(out);
 						oPlayer.makeMove(in, out);
-						board.display(out);
+						if (!isFin()) board.display(out);
 						out.println("Waiting for opponent...");
 						out.flush();
 						p1turn = true;
@@ -132,11 +132,6 @@ public class Game implements Constants {
 					}
 				}
 			}
-			else {
-				if (board.xWins()) wins(out, xPlayer);
-				else if (board.oWins()) wins(out, oPlayer);
-				else tie(out);
-			}
 		}
 	}
 	
@@ -144,7 +139,9 @@ public class Game implements Constants {
 		board.display(out);
 		out.print("\n=========================================\n"
 				+ p.getName() +" wins!\n"
-				+ "=========================================");
+				+ "=========================================\n");
+		out.flush();
+		out.println("QUIT");
 		out.flush();
 	}
 
@@ -152,7 +149,9 @@ public class Game implements Constants {
 		board.display(out);
 		out.print("\n=========================================\n"
 				+ "Tie game!\n"
-				+ "=========================================");
+				+ "=========================================\n");
+		out.flush();
+		out.println("QUIT");
 		out.flush();
 	}
 	

@@ -39,6 +39,7 @@ public class GameClient {
 					System.out.println(response);
 					response = socketIn.readLine();
 				}
+				if (response.equals("QUIT")) break;
 				input = stdIn.readLine();
 				if (!input.equalsIgnoreCase("QUIT")){
 					socketOut.println(input);	
