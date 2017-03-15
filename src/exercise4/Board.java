@@ -41,16 +41,6 @@ public class Board implements Constants {
 		}
 	}
 	
-	public Board(PrintWriter o1) {
-		markCount = 0;
-		theBoard = new char[3][];
-		for (int i = 0; i < 3; i++) {
-			theBoard[i] = new char[3];
-			for (int j = 0; j < 3; j++)
-				theBoard[i][j] = SPACE_CHAR;
-		}
-	}
-	
 	/**
 	 * Get mark at certain row and col even if row or col are >2
 	 * @param row which row to select

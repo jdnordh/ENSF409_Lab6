@@ -10,7 +10,7 @@ import java.net.Socket;
 public class GameThread extends Thread{
 	private Game game;
 	private Socket socket;
-	
+		
 	private PrintWriter out;
 	private BufferedReader in;
 	
@@ -44,11 +44,16 @@ public class GameThread extends Thread{
 		try {
 			while (running){
 				game.setPlayer(in, out, this.getName());
-				if (game.bothSet()) game.play(in, out, this.getName());
+				if (game.bothSet() && !game.isFin()) game.play(in, out, this.getName());
+				if (game.isFin() && !game.getAgain(this.getName())) {
+					game.playAgain(in, out, this.getName()); //TODO  fix this
+				}
 				sleep(1);
 			}
 		} catch (InterruptedException e) {
 			System.out.println("Thread " + this.getName() + " interrupted");
+		} catch (IOException e) {
+			System.out.println("Error in thread " + this.getName() + ": " + e.getMessage());
 		}
 		
 	}

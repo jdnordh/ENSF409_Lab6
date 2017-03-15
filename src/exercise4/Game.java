@@ -11,6 +11,13 @@ public class Game implements Constants {
 	private boolean p2;
 	private boolean p1turn;
 	private boolean play;
+	private boolean opSet;
+	
+	private boolean p1Again;
+	private boolean p2Again;
+	
+	private boolean p1AgainT;
+	private boolean p2AgainT;
 	
 	private HumanPlayer xPlayer;
 	private HumanPlayer oPlayer;
@@ -21,6 +28,11 @@ public class Game implements Constants {
         p2 = false;
         p1turn = true;
         play = true;
+        opSet = false;
+        p1Again = false;
+        p2Again = false;
+        p1AgainT = false;
+        p2AgainT = false;
 	}
 	
 	public Board getBoard(){
@@ -29,39 +41,6 @@ public class Game implements Constants {
 	
 	public boolean bothSet(){
 		return p1 && p2;
-	}
-	
-	public static void main(String[] args) throws IOException {
-		Referee theRef;
-		Player xPlayer, oPlayer;
-		BufferedReader stdin;
-		Game theGame = new Game();
-		stdin = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("\nPlease enter the name of the \'X\' player: ");
-		String name= stdin.readLine();
-		while (name == null) {
-			System.out.print("Please try again: ");
-			name = stdin.readLine();
-		}
-
-		xPlayer = new HumanPlayer(name, LETTER_X);
-		xPlayer.setBoard(theGame.board);
-		
-		System.out.print("\nPlease enter the name of the \'O\' player: ");
-		name = stdin.readLine();
-		while (name == null) {
-			System.out.print("Please try again: ");
-			name = stdin.readLine();
-		}
-		
-		oPlayer = new HumanPlayer(name, LETTER_O);
-		oPlayer.setBoard(theGame.board);
-		
-		theRef = new Referee();
-		theRef.setBoard(theGame.board);
-		theRef.setoPlayer(oPlayer);
-		theRef.setxPlayer(xPlayer);
-        
 	}
 	
 	public void setPlayer(BufferedReader in, PrintWriter out, String s){
@@ -82,6 +61,8 @@ public class Game implements Constants {
 				xPlayer.setBoard(board);
 				p1 = true;
 				System.out.println("P1 set");
+				out.println("Waiting for opponent...");
+				out.flush();
 			} catch (IOException e) {
 				out.println("Error: " + e.getMessage());
 			}
@@ -105,23 +86,34 @@ public class Game implements Constants {
 				oPlayer.setBoard(board);
 				p2 = true;
 				System.out.println("P2 set");
+				out.println("Waiting for opponent...");
+				out.flush();
 			} catch (IOException e) {
 				out.println("Error: " + e.getMessage());
 			}
 		}
-		if(p1 && p2){
+		if(p1 && p2 && !opSet){
 			xPlayer.setOpponent(oPlayer);
 			oPlayer.setOpponent(xPlayer);
+			opSet = true;
 			System.out.println("Opponents set");
 		}
 	}
 	
+	public boolean isFin(){
+		return board.isFull() || board.xWins() || board.oWins();
+	}
+	
 	synchronized public void play(BufferedReader in, PrintWriter out, String s){
 		if (p1 && p2 && play){
-			if (!board.oWins() && !board.xWins() && !board.isFull()){
+			if (!isFin()){
 				if (p1turn && s.equals("Player 1")) {
 					try {
+						board.display(out);
 						xPlayer.makeMove(in, out);
+						board.display(out);
+						out.println("Waiting for opponent...");
+						out.flush();
 						p1turn = false;
 					} catch (IOException e) {
 						out.println("Error: " + e.getMessage());
@@ -129,28 +121,16 @@ public class Game implements Constants {
 				}
 				else if (!p1turn && s.equals("Player 2")) {
 					try {
+						board.display(out);
 						oPlayer.makeMove(in, out);
+						board.display(out);
+						out.println("Waiting for opponent...");
+						out.flush();
 						p1turn = true;
 					} catch (IOException e) {
 						out.println("Error: " + e.getMessage());
 					}
 				}
-				else {
-					out.println("Waiting for opponent...");
-					out.flush();
-				}
-			}
-			else {
-				if (board.xWins()) wins(out, xPlayer);
-				else if (board.oWins()) wins(out, oPlayer);
-				else tie(out);
-			}
-		}
-		if (board.isFull() || board.xWins() || board.oWins()){
-			try {
-				play = playAgain(in, out);
-			} catch (IOException e) {
-				out.println("Error: " + e.getMessage());
 			}
 		}
 	}
@@ -170,7 +150,25 @@ public class Game implements Constants {
 				+ "=========================================");
 	}
 	
-	synchronized private static Boolean playAgain(BufferedReader in, PrintWriter out) throws IOException{
+	synchronized private void updatePlay(){
+		play = p1Again && p2Again;
+		if (play) {
+			board = new Board();
+			p1turn = true;
+		}
+	}
+	
+	public boolean getAgain(String name){
+		if (name.equals("Player 1")) return p1AgainT;
+		return p2AgainT;
+	}
+	
+	public void playAgain(BufferedReader in, PrintWriter out, String name) throws IOException{
+		//Print out the winner to both clients
+		if (board.xWins()) wins(out, xPlayer);
+		else if (board.oWins()) wins(out, oPlayer);
+		else tie(out);
+		
 		out.print("\nWould you like to play again? (Y|N)\n");
 		out.println("GIVE");
 		out.flush();
@@ -181,9 +179,28 @@ public class Game implements Constants {
 			out.flush();
 			input = in.readLine();
 		}
+		out.println("Waiting for opponent...");
+		out.flush();
 		if (input.toUpperCase().charAt(0)=='Y'){
-			return true;
+			if (name.equals("Player 1")) {
+				p1Again = true;
+				p1AgainT = true;
+			}
+			else {
+				p2Again = true;
+				p2AgainT = true;
+			}
 		}
-		else return false;
+		else {
+			if (name.equals("Player 1")) {
+				p1Again = false;
+				p1AgainT = true;
+			}
+			else {
+				p2Again = false;
+				p2AgainT = true;
+			}
+		}
+		updatePlay();
 	}
 }

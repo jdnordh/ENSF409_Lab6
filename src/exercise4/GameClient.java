@@ -35,16 +35,14 @@ public class GameClient {
 			try {
 				response = socketIn.readLine();
 				while (!response.equals("GIVE")) {			//The client will receive input until prompted to give input
-					if (response.equals("QUIT")) break;		// TODO make functions send GIVE before needing input
+					if (response.equals("QUIT")) break;
 					System.out.println(response);
 					response = socketIn.readLine();
 				}
-				System.out.println(response);
 				input = stdIn.readLine();
 				if (!input.equalsIgnoreCase("QUIT")){
 					socketOut.println(input);	
 					socketOut.flush();
-					System.out.println("Gave output...");
 				}else{
 					break;
 				}
@@ -53,7 +51,7 @@ public class GameClient {
 				System.out.println("Error: " + e.getMessage());
 				break;
 			} catch (NullPointerException n){
-				System.out.println("Error: " + n.getMessage());
+				System.out.println("Error: Connection Reset");
 				break;
 			}
 		}
