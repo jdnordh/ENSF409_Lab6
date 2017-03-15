@@ -34,8 +34,11 @@ public class GameClient {
 		while (true) {
 			try {
 				response = socketIn.readLine();
-				if (response.equals("QUIT")) break;
-				System.out.println(response);
+				while (response.equals("GIVE")) {			//The client will receive input until prompted to give input
+					if (response.equals("QUIT")) break;		// TODO make functions send GIVE before needing input
+					System.out.println(response);
+					response = socketIn.readLine();
+				}
 				input = stdIn.readLine();
 				if (!input.equalsIgnoreCase("QUIT")){
 					socketOut.println(input);	
