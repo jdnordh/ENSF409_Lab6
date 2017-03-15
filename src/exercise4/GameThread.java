@@ -40,12 +40,11 @@ public class GameThread extends Thread{
 		System.out.println("Thread " + this.getName() + " started");
 		String temp = "Starting the game...";
 		out.println(temp);
-		out.flush();
 		game.getBoard().display(out);
 		try {
 			while (running){
 				game.setPlayer(in, out, this.getName());
-				game.play(in, out, this.getName());
+				if (game.bothSet()) game.play(in, out, this.getName());
 				sleep(1);
 			}
 		} catch (InterruptedException e) {

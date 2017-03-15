@@ -17,13 +17,15 @@ public class HumanPlayer extends Player{
 	 */
 	public void makeMove(BufferedReader in, PrintWriter out) throws IOException{
 		int row=0, col=0;
-		out.print(name + ", what row should your next " + mark + " be placed in? ");
+		out.println(name + ", what row should your next " + mark + " be placed in? ");
+		out.println("GIVE");
 		out.flush();
 		String input= in.readLine();
 		do {
 			if (input!=null && input.length()>0) row = input.charAt(0)-48;
 			while (input == null || row<0 || row>2 || input.length()<1) {
-				out.print("Please try again: ");
+				out.println("Please try again: ");
+				out.println("GIVE");
 				out.flush();
 				input = in.readLine();
 				if (isNumeric(input)){
@@ -31,12 +33,14 @@ public class HumanPlayer extends Player{
 				}
 				else in=null;
 			}
-			out.print(name + ", what column should your next " + mark + " be placed in? ");
+			out.println(name + ", what column should your next " + mark + " be placed in? ");
+			out.println("GIVE");
 			out.flush();
 			input = in.readLine();
 			if (input!=null && input.length()>0) col = input.charAt(0)-48;
 			while (input == null || col<0 || col>2 || input.length()<1) {
 				out.print("Please try again: ");
+				out.print("GIVE");
 				out.flush();
 				input = in.readLine();
 				if (isNumeric(input)){
