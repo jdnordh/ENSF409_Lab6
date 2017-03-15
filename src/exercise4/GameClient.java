@@ -48,10 +48,10 @@ public class GameClient {
 				}
 				
 			} catch (IOException e) {
-				System.out.println("Error: " + e.getMessage());
+				System.out.println("Disconected: " + e.getMessage());
 				break;
 			} catch (NullPointerException n){
-				System.out.println("Error: Connection Reset");
+				System.out.println("Disconected: Connection Reset");
 				break;
 			}
 		}

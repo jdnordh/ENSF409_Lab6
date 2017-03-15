@@ -13,11 +13,8 @@ public class Game implements Constants {
 	private boolean play;
 	private boolean opSet;
 	
-	private boolean p1Again;
-	private boolean p2Again;
-	
-	private boolean p1AgainT;
-	private boolean p2AgainT;
+	private boolean p1P;
+	private boolean p2P;
 	
 	private HumanPlayer xPlayer;
 	private HumanPlayer oPlayer;
@@ -29,10 +26,12 @@ public class Game implements Constants {
         p1turn = true;
         play = true;
         opSet = false;
-        p1Again = false;
-        p2Again = false;
-        p1AgainT = false;
-        p2AgainT = false;
+        p1P = false;
+        p2P = false;
+	}
+	
+	public boolean play(){
+		return play;
 	}
 	
 	public Board getBoard(){
@@ -105,6 +104,7 @@ public class Game implements Constants {
 	}
 	
 	synchronized public void play(BufferedReader in, PrintWriter out, String s){
+		//this.setFull();
 		if (p1 && p2 && play){
 			if (!isFin()){
 				if (p1turn && s.equals("Player 1")) {
@@ -132,6 +132,11 @@ public class Game implements Constants {
 					}
 				}
 			}
+			else {
+				if (board.xWins()) wins(out, xPlayer);
+				else if (board.oWins()) wins(out, oPlayer);
+				else tie(out);
+			}
 		}
 	}
 	
@@ -148,59 +153,27 @@ public class Game implements Constants {
 		out.print("\n=========================================\n"
 				+ "Tie game!\n"
 				+ "=========================================");
-	}
-	
-	synchronized private void updatePlay(){
-		play = p1Again && p2Again;
-		if (play) {
-			board = new Board();
-			p1turn = true;
-		}
-	}
-	
-	public boolean getAgain(String name){
-		if (name.equals("Player 1")) return p1AgainT;
-		return p2AgainT;
-	}
-	
-	public void playAgain(BufferedReader in, PrintWriter out, String name) throws IOException{
-		//Print out the winner to both clients
-		if (board.xWins()) wins(out, xPlayer);
-		else if (board.oWins()) wins(out, oPlayer);
-		else tie(out);
-		
-		out.print("\nWould you like to play again? (Y|N)\n");
-		out.println("GIVE");
 		out.flush();
-		String input= in.readLine();
-		while (input == null || input.length()<1){
-			out.println("Please try again: ");
-			out.println("GIVE");
-			out.flush();
-			input = in.readLine();
+	}
+	
+	public void printWinner(PrintWriter out, String name){
+		if ((name.equals("Player 1") && !p1P) || (name.equals("Player 2") && !p2P)){
+			if (board.xWins()) wins(out, xPlayer);
+			else if (board.oWins()) wins(out, oPlayer);
+			else tie(out);
 		}
-		out.println("Waiting for opponent...");
-		out.flush();
-		if (input.toUpperCase().charAt(0)=='Y'){
-			if (name.equals("Player 1")) {
-				p1Again = true;
-				p1AgainT = true;
-			}
-			else {
-				p2Again = true;
-				p2AgainT = true;
-			}
+		if (name.equals("Player 1")) p1P =true;
+		else p2P = true;
+		if (p1P && p2P){
+			System.exit(0);
 		}
-		else {
-			if (name.equals("Player 1")) {
-				p1Again = false;
-				p1AgainT = true;
-			}
-			else {
-				p2Again = false;
-				p2AgainT = true;
+	}
+	
+	public void setFull(){
+		for (int i = 0; i < 3; i++){
+			for (int j = 0; j < 3; j++){
+				board.addMark(i, j, LETTER_O);
 			}
 		}
-		updatePlay();
 	}
 }
