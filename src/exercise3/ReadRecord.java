@@ -45,7 +45,8 @@ public class ReadRecord {
         } catch(EOFException e){
             System.out.println( "EOF reached.");
         } catch (ClassNotFoundException e) {
-            System.err.println( "Error: Class not found." );
+            System.err.println( "Error: Class not found.\n");
+            e.printStackTrace();
 		} catch (IOException e) {
             System.err.println( "Error: IO Exception." );
 		} catch (NullPointerException e){
@@ -57,6 +58,6 @@ public class ReadRecord {
     public static void main(String [] args)
     {
         ReadRecord d = new ReadRecord();
-        d.readObjectsFromFile("allSongs.ser");
+        d.readObjectsFromFile("mySongs.ser");
     }
 }

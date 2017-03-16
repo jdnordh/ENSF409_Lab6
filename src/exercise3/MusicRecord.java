@@ -6,8 +6,9 @@ import java.io.Serializable;
  *   A simple class that represents a music record
  *
  */
-class MusicRecord implements Serializable
+public class MusicRecord implements Serializable
 	{
+		private static final long serialVersionUID = 1L;
 		private int year_recorded;
 		private String songName;
 		private String singerName;
