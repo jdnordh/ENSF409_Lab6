@@ -18,7 +18,7 @@ public class Game implements Constants {
 	
 	private HumanPlayer xPlayer;
 	private HumanPlayer oPlayer;
-	
+	/** Default constructor */
 	public Game() {
         board  = new Board();
         p1 = false;
@@ -29,19 +29,26 @@ public class Game implements Constants {
         p1P = false;
         p2P = false;
 	}
-	
+	/** Returns play */
 	public boolean play(){
 		return play;
 	}
-	
+	/** return the board */
 	public Board getBoard(){
 		return board;
 	}
 	
+	/** Returns true if both players are set */
 	public boolean bothSet(){
 		return p1 && p2;
 	}
 	
+	/**
+	 * Each thread assigns a player to the game if it is not already initialized
+	 * @param in Reader
+	 * @param out Writer
+	 * @param s Thread Name
+	 */
 	public void setPlayer(BufferedReader in, PrintWriter out, String s){
 		while (!p1 && s.equals("Player 1")){
 			try{
@@ -99,12 +106,21 @@ public class Game implements Constants {
 		}
 	}
 	
+	/**
+	 * Check if the game is finished
+	 * @return True if the game is over
+	 */
 	public boolean isFin(){
 		return board.isFull() || board.xWins() || board.oWins();
 	}
 	
+	/**
+	 * Both threads will try to play, but are only allowed to if it is their turn
+	 * @param in Reader from the the thread
+	 * @param out Writer from the thread
+	 * @param s Name of the thread
+	 */
 	synchronized public void play(BufferedReader in, PrintWriter out, String s){
-		this.setFull();
 		if (p1 && p2 && play){
 			if (!isFin()){
 				if (p1turn && s.equals("Player 1")) {
@@ -135,6 +151,11 @@ public class Game implements Constants {
 		}
 	}
 	
+	/**
+	 * Prints the winner to the clients
+	 * @param out Writer from the thread
+	 * @param p player 
+	 */
 	public void wins(PrintWriter out, Player p){
 		board.display(out);
 		out.print("\n=========================================\n"
@@ -145,6 +166,10 @@ public class Game implements Constants {
 		out.flush();
 	}
 
+	/**
+	 * Prints that game was a tie to both clients 
+	 * @param out Writer from thread
+	 */
 	public void tie(PrintWriter out){
 		board.display(out);
 		out.print("\n=========================================\n"
@@ -155,6 +180,11 @@ public class Game implements Constants {
 		out.flush();
 	}
 	
+	/**
+	 * Prints the winner or tie to the clients
+	 * @param out Writer from the thread
+	 * @param name thread name 
+	 */
 	public void printWinner(PrintWriter out, String name){
 		if ((name.equals("Player 1") && !p1P) || (name.equals("Player 2") && !p2P)){
 			if (board.xWins()) wins(out, xPlayer);
@@ -168,6 +198,9 @@ public class Game implements Constants {
 		}
 	}
 	
+	/**
+	 * For testing purposes only
+	 */
 	public void setFull(){
 		for (int i = 0; i < 3; i++){
 			for (int j = 0; j < 3; j++){

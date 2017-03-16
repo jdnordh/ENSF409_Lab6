@@ -15,7 +15,7 @@ public class GameThread extends Thread{
 	private BufferedReader in;
 	
 	private boolean running;
-	
+	/** construct a new thread */
 	public GameThread(String name, Socket s){
 		super(name);
 		socket = s;
@@ -26,15 +26,15 @@ public class GameThread extends Thread{
 			System.out.println("Error... " + e.getMessage());
 		}
 	}
-	
+	/** set the threads game */
 	public void setGame(Game g){
 		game = g;
 	}
-	
+	/** check if the thread is running */
 	public boolean isRunning(){
 		return running;
 	}
-	
+	/** The thread will call to try to play the game */
 	public void run(){
 		running = true;
 		System.out.println("Thread " + this.getName() + " started");

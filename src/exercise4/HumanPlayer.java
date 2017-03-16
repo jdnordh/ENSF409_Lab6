@@ -13,7 +13,7 @@ public class HumanPlayer extends Player{
 	}
 	/**
 	 * Player is able to make a move. Takes input from keyboard and check whether it is a proper input or not
-	 * @throws IOException Catches errors
+	 * @throws IOException Catch errors
 	 */
 	public void makeMove(BufferedReader in, PrintWriter out) throws IOException{
 		int row=0, col=0;

@@ -12,6 +12,11 @@ public class GameClient {
 	private BufferedReader stdIn;
 	private BufferedReader socketIn;
 	
+	/**
+	 * Construct a GameClient
+	 * @param serverName Server name
+	 * @param portNumber port number
+	 */
 	public GameClient(String serverName, int portNumber) {
 		try {
 			palinSocket = new Socket(serverName, portNumber);

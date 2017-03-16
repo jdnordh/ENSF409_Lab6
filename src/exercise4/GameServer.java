@@ -19,7 +19,7 @@ public class GameServer {
 	
 	private GameThread p1;
 	private GameThread p2;
-	
+	/** Construct a server */
 	public GameServer(String s, int port){
 		try{
 			InetAddress a = InetAddress.getByName("localhost");
@@ -33,6 +33,7 @@ public class GameServer {
 		}
 	}
 
+	/** Waits for a client to connect, then starts a new thread to handle it */
 	public void play(){	
 		game = new Game();
 		try {
